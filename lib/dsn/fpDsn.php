@@ -39,7 +39,7 @@ class fpDsn
    * @var string
    */
   protected $_driver;
-   
+
   /**
    *
    * @param array|string $dsn
@@ -95,13 +95,13 @@ class fpDsn
   {
     return $this->_driver;
   }
-  
+
   /**
-   * 
+   *
    * @param string|array $dsn
    */
   protected function _parse($dsn)
-  {//var_dump($dsn);
+  {
     if (is_array($dsn)) {
       $this->_parseArray($dsn);
     } else if (is_string($dsn)) {
@@ -110,9 +110,9 @@ class fpDsn
       throw new InvalidArgumentException('The dsn has invalid type. can be either array or string but given type is `'.gettype($dsn).'`');
     }
   }
-  
+
   /**
-   * 
+   *
    * @param array $dns
    */
   protected function _parseArray(array $dsn)
@@ -120,21 +120,21 @@ class fpDsn
     $dsn = array_merge(
       array('dsn' => '', 'host' => '', 'dbname' => '', 'username' => '', 'password' => ''),
       $dsn);
-    
+
     $parse = explode(':', $dsn['dsn']);
     if (count($parse) != 2) {
       throw new InvalidArgumentException('The dsn is invalid. Should contain driver name and after `:` other dsn options');
     }
     list($driver, $options) = $parse;
-    
+
     foreach (explode(';', $options) as $option) {
       if (empty($option)) continue;
-      
+
       $parse = explode('=', $option);
       if (count($parse) != 2) {
         throw new InvalidArgumentException('A dsn option invaid is invalid. Should match the patter key=value but given `'.$option.'`');
       }
-      
+
       list($key, $value) = $parse;
       $dsn[$key] = $value;
     }
@@ -145,11 +145,11 @@ class fpDsn
     $this->_setHost($dsn['host']);
     $this->_setDatabase($dsn['dbname']);
   }
-  
+
   /**
-   * 
+   *
    * @param string $dsn
-   * 
+   *
    * @throws InvalidArgumentException
    */
   protected function _parseString($dsn)
@@ -158,7 +158,7 @@ class fpDsn
     if (!is_array($options)) {
       throw new InvalidArgumentException('The parse_url function return false. It means that the dsn `'.$dsn.'` given is seriously malformed');
     }
-    //var_dump($options);
+
     $options = array_merge(
       array('scheme' => '', 'user' => '', 'pass' => '', 'path' => '', 'host' => ''),
       $options);
@@ -167,19 +167,18 @@ class fpDsn
     if ($options['path']&& $options['path'][0] == '/') {
       $options['path'] = substr($options['path'], 1);
     }
-//    var_dump($options);
-//    die;
+
     $this->_setDriver($options['scheme']);
     $this->_setUser($options['user']);
     $this->_setPassword($options['pass']);
     $this->_setHost($options['host']);
     $this->_setDatabase($options['path']);
   }
-  
+
   /**
-   * 
+   *
    * @param string $driver
-   * 
+   *
    * @throws InvalidArgumentException if the driver invalid or unsupported
    */
   protected function _setDriver($driver)
@@ -188,14 +187,14 @@ class fpDsn
     if (!in_array($driver, $drivers)) {
       throw new InvalidArgumentException('The invalid or unsupported driver given `'.$driver.'`. Only supported `'.implode('`, `', $drivers).'`');
     }
-    
+
     $this->_driver = $driver;
   }
-  
+
   /**
-   * 
+   *
    * @param string $user
-   * 
+   *
    * @throws InvalidArgumentException if the user empty
    */
   protected function _setUser($user)
@@ -203,30 +202,30 @@ class fpDsn
     if (empty($user)) {
       throw new InvalidArgumentException('The user is empty but it is not allowed');
     }
-    
+
     $this->_user = $user;
   }
-  
+
   /**
-   * 
+   *
    * @param string $password
    */
   protected function _setPassword($password)
   {
     $this->_password = $password;
   }
-  
+
   /**
-   * 
+   *
    * @param string $host
    */
   protected function _setHost($host)
   {
     $this->_host = $host;
   }
-  
+
   /**
-   * 
+   *
    * @param string $database
    */
   protected function _setDatabase($database)
@@ -234,7 +233,7 @@ class fpDsn
     if (empty($database)) {
       throw new InvalidArgumentException('The database name is empty but it is not allowed');
     }
-    
+
     $this->_database = $database;
   }
 }
